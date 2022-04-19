@@ -115,7 +115,7 @@ class Ui_stg_form(object):
 
     def retranslateUi(self, stg_form):
         stg_form.setWindowTitle(QCoreApplication.translate("stg_form", u"Form", None))
-        self.cbox_clear_elements.setText(QCoreApplication.translate("stg_form", u"Clear This App HTML elements before processing", None))
+        self.cbox_clear_elements.setText(QCoreApplication.translate("stg_form", u"Clear previously generated HTML elements before processing", None))
         self.cbox_save_origins.setText(QCoreApplication.translate("stg_form", u"Save original text before processing", None))
         self.label.setText(QCoreApplication.translate("stg_form", u"Saved HTML file path:", None))
         self.btn_ok.setText(QCoreApplication.translate("stg_form", u"Ok", None))

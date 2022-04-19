@@ -11,6 +11,7 @@ import PySide6.QtWidgets as Qw
 from datetime import datetime
 import paths
 import logging
+import formatter
 import qt_icons
 import argparse
 import sys
@@ -21,8 +22,9 @@ import colorsys
 LOGS_COLORS = {logging.INFO: "#206040", logging.WARNING: "#996633", logging.ERROR: "#ad1f1f"}
 
 HELP_TEXT = """
-This is the hlp text\n
-back to line.
+Modify Shopify page code to add 2 columns sections. This is done by
+replacing <h6> elements that contain the following texts:
+###start### (or ###start_inv### to inverse columns), ###next###, ###end###.
 """
 
 
@@ -40,9 +42,9 @@ def change_lightness(in_hex_color, in_added_lightness):
 def setup_logging(logging_lvl, save_logs_to_file):
     init_logger = logging.getLogger(__package__)
     init_logger.setLevel(logging_lvl)
-    formatter = logging.Formatter('[%(levelname)s] [%(asctime)s] - %(message)s', "%Y-%m-%d %H:%M:%S")
+    i_formatter = logging.Formatter('[%(levelname)s] [%(asctime)s] - %(message)s', "%Y-%m-%d %H:%M:%S")
     ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
+    ch.setFormatter(i_formatter)
     init_logger.addHandler(ch)
     if save_logs_to_file:
         log_file_path = paths.get_logs_path(__package__)
@@ -66,6 +68,7 @@ class MainWindow(Qw.QMainWindow):
         self.ui_settings = Ui_stg_form()
         self.ui_settings.setupUi(self.ui.wid_settings)
         self.help_msg = Qw.QMessageBox(self)
+        self.setWindowTitle(__package__)
         self.thread = None
         self.downloader = None
         self.show_logs = True
@@ -76,38 +79,20 @@ class MainWindow(Qw.QMainWindow):
             "save_file_path": paths.get_save_file_path(),
         }
         self.ui_settings.ledit_save_path.setText(self.saved_settings["save_file_path"])
+        self.enable_disable_save_path_line_edit()
         self._style_app()
         self._connect_signals()
         self.show_hide_logs()
         self.show_hide_settings()
 
-    # def process_link(self):
-    #     original_link_text = self.ui.text_edit_link.toPlainText()
-    #     video_title = self.ui.line_edit_vid_title.text()
-    #     res_opt = "720p"
-    #     if self.ui.radio_btn_360p:
-    #         res_opt = "360p"
-    #     elif self.ui.radio_btn_1080p:
-    #         res_opt = "1080p"
-    #     self.thread = Qc.QThread()
-    #     self.downloader = VideoDownloadWorker(original_link_text, res_opt, video_title)
-    #     self.downloader.moveToThread(self.thread)
-    #
-    #     # Connect signals and slots
-    #     self.thread.started.connect(self.downloader.run)
-    #     self.thread.finished.connect(self.thread.deleteLater)
-    #
-    #     self.downloader.complete.connect(self.thread.quit)
-    #     self.downloader.complete.connect(self.downloader.deleteLater)
-    #     self.downloader.log.connect(self.log)
-    #
-    #     # start the thread
-    #     self.thread.start()
-    #
-    #     self.ui.btn_process.setEnabled(False)
-    #     self.thread.finished.connect(
-    #         lambda: self.ui.btn_process.setEnabled(True)
-    #     )
+    def process_html(self):
+        html_processor = formatter.HtmlFormatter(self)
+        html_processor.log.connect(self.log)
+        path = self.saved_settings["save_file_path"]
+        if not self.saved_settings["save_origins_to_file"]:
+            path = ""
+        out = html_processor.process(self.ui.plain_text_html.toPlainText(), self.saved_settings["clear_elements"], path)
+        self.ui.plain_text_processed.setPlainText(out)
 
     def clear_entries(self):
         self.log("Entries cleared")
@@ -115,7 +100,7 @@ class MainWindow(Qw.QMainWindow):
         self.ui.plain_text_processed.clear()
 
     def close_app(self):
-        self.log("Closing app", logging.DEBUG)
+        self.log("Closing app", logging.DEBUG, 5000)
         self.close()
 
     def show_hide_logs(self):
@@ -165,7 +150,7 @@ class MainWindow(Qw.QMainWindow):
             self.ui.wid_html.hide()
 
     def _connect_signals(self):
-        # self.ui.btn_process.clicked.connect(self.process_link)
+        self.ui.btn_process.clicked.connect(self.process_html)
         self.ui.btn_clear.clicked.connect(self.clear_entries)
         self.ui.btn_settings.clicked.connect(self.show_hide_settings)
         self.ui.btn_quit.clicked.connect(self.close_app)
@@ -200,9 +185,13 @@ class MainWindow(Qw.QMainWindow):
 
         self.i_c = qt_icons.qt_icon_from_text_image(qt_icons.CLEAR_ICON)
         self.ui.btn_clear.setIcon(self.i_c)
+        self.ui_settings.btn_cancel.setIcon(self.i_c)
         #
         self.i_h = qt_icons.qt_icon_from_text_image(qt_icons.INFO_ICON)
         self.ui.btn_help.setIcon(self.i_h)
+
+        self.i_sv = qt_icons.qt_icon_from_text_image(qt_icons.SAVE_ICON)
+        self.ui_settings.btn_ok.setIcon(self.i_sv)
 
         # message box
         # self.help_msg.setStyleSheet("color: red; background-color: green;")

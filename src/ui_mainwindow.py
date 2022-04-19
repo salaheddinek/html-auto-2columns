@@ -166,7 +166,7 @@ class Ui_MainWindow(object):
         self.widget_7.setObjectName(u"widget_7")
         self.verticalLayout_2 = QVBoxLayout(self.widget_7)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_2.setContentsMargins(0, -1, 3, -1)
         self.label = QLabel(self.widget_7)
         self.label.setObjectName(u"label")
 
@@ -274,7 +274,7 @@ class Ui_MainWindow(object):
         self.widget_4.setObjectName(u"widget_4")
         self.verticalLayout_4 = QVBoxLayout(self.widget_4)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(-1, -1, 0, -1)
+        self.verticalLayout_4.setContentsMargins(3, -1, 0, -1)
         self.label_2 = QLabel(self.widget_4)
         self.label_2.setObjectName(u"label_2")
 

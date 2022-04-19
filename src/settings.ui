@@ -33,7 +33,7 @@
       <item>
        <widget class="QCheckBox" name="cbox_clear_elements">
         <property name="text">
-         <string>Clear This App HTML elements before processing</string>
+         <string>Clear previously generated HTML elements before processing</string>
         </property>
         <property name="checked">
          <bool>true</bool>
