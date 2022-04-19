@@ -170,6 +170,10 @@ class MainWindow(Qw.QMainWindow):
             btn_color = button.palette().color(Qg.QPalette.Button).name()
             button.setStyleSheet(self._generate_button_stylesheet(change_lightness(btn_color, -0.05)))
 
+        frames = [self.ui.plain_text_logs, self.ui.plain_text_html, self.ui.frame, self.ui.plain_text_processed]
+        for frame in frames:
+            frame.setStyleSheet(self._generate_plain_text_edit_stylesheet())
+
         self.i_stg = qt_icons.qt_icon_from_text_image(qt_icons.SETTINGS_ICON)
         self.ui.btn_settings.setIcon(self.i_stg)
 
@@ -240,6 +244,11 @@ class MainWindow(Qw.QMainWindow):
         ss_tb = ss_tb.replace("padding: 10px 15px 10px 15px;", "padding: 7px 7px 7px 7px;")
         # print(ss_tb)
         return ss + ss_tb
+
+    @staticmethod
+    def _generate_plain_text_edit_stylesheet():
+        ss = "QFrame {border-width: 1; border-radius: 3; border-style: solid; border-color: rgb(180, 180, 180)}"
+        return ss
 
 
 def boolean_string(s):

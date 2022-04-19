@@ -9,9 +9,10 @@ def join_path(i_path, i_folder_or_file):
 
 
 def deploy_command(i_deploy_path, i_app_path, i_app_name, additional_params=""):
-    cmd = "cd {}; ".format(i_deploy_path)
+    cmd = ""
+    cmd += "cd {}; ".format(i_deploy_path)
     cmd += f"pyinstaller {additional_params} --onefile -n {i_app_name} --clean  {i_app_path};"
-    print("Build command: {}".format(cmd))
+    print("Build command:\n\n{}\n\n".format(cmd))
     os.system(cmd)
 
 
