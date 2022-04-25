@@ -9,52 +9,13 @@ import PySide6.QtGui as Qg
 import PySide6.QtCore as Qc
 import PySide6.QtWidgets as Qw
 from datetime import datetime
-import paths
+import config
 import logging
 import formatter
 import qt_icons
 import argparse
 import sys
-import os
-import colorsys
-
-
-LOGS_COLORS = {logging.INFO: "#206040", logging.WARNING: "#996633", logging.ERROR: "#ad1f1f"}
-
-HELP_TEXT = """
-Modify Shopify page code to add 2 columns sections. This is done by
-replacing <h6> elements that contain the following texts:
-###start### (or ###start_inv### to inverse columns), ###next###, ###end###.
-"""
-
-
-def change_lightness(in_hex_color, in_added_lightness):
-    c_hex = in_hex_color.lstrip('#')
-    lv = len(c_hex)
-    r, g, b = tuple(int(c_hex[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
-    h, l, s = colorsys.rgb_to_hls(r / 255.0, g / 255.0, b / 255.0)
-    n_l = l + in_added_lightness
-    n_l = max(0, min(1, n_l))
-    r, g, b = colorsys.hls_to_rgb(h, n_l, s)
-    return '#%02x%02x%02x' % (int(r * 255), int(g * 255), int(b * 255))
-
-
-def setup_logging(logging_lvl, save_logs_to_file):
-    init_logger = logging.getLogger(__package__)
-    init_logger.setLevel(logging_lvl)
-    i_formatter = logging.Formatter('[%(levelname)s] [%(asctime)s] - %(message)s', "%Y-%m-%d %H:%M:%S")
-    ch = logging.StreamHandler()
-    ch.setFormatter(i_formatter)
-    init_logger.addHandler(ch)
-    if save_logs_to_file:
-        log_file_path = paths.get_logs_path(__package__)
-        if os.path.exists(log_file_path):
-            os.remove(log_file_path)
-        handler = logging.FileHandler(log_file_path, encoding='utf8')
-        n_formatter = logging.Formatter('[%(levelname)s] [%(asctime)s] - %(message)s', "%H:%M:%S")
-        handler.setFormatter(n_formatter)
-        handler.setLevel(logging_lvl)
-        init_logger.addHandler(handler)
+import styling
 
 
 class MainWindow(Qw.QMainWindow):
@@ -76,7 +37,7 @@ class MainWindow(Qw.QMainWindow):
         self.saved_settings = {
             "clear_elements": True,
             "save_origins_to_file": False,
-            "save_file_path": paths.get_save_file_path(),
+            "save_file_path": config.get_save_file_path(),
         }
         self.ui_settings.ledit_save_path.setText(self.saved_settings["save_file_path"])
         self.enable_disable_save_path_line_edit()
@@ -139,13 +100,11 @@ class MainWindow(Qw.QMainWindow):
         if self.show_settings:
             self.show_settings = False
             self.ui.btn_settings.setDisabled(False)
-            self.ui.btn_settings.setDown(False)
             self.ui.wid_settings.hide()
             self.ui.wid_html.show()
         else:
             self.show_settings = True
             self.ui.btn_settings.setDisabled(True)
-            self.ui.btn_settings.setDown(True)
             self.ui.wid_settings.show()
             self.ui.wid_html.hide()
 
@@ -168,11 +127,18 @@ class MainWindow(Qw.QMainWindow):
                              self.ui_settings.btn_ok, self.ui_settings.btn_cancel]
         for button in self.Buttons_list:
             btn_color = button.palette().color(Qg.QPalette.Button).name()
-            button.setStyleSheet(self._generate_button_stylesheet(change_lightness(btn_color, -0.05)))
+            button.setStyleSheet(styling.generate_button_stylesheet(btn_color))
 
-        frames = [self.ui.plain_text_logs, self.ui.plain_text_html, self.ui.frame, self.ui.plain_text_processed]
+        self.Tool_Buttons_list = [self.ui.btn_help, self.ui.btn_logs, self.ui.btn_settings]
+        for button in self.Tool_Buttons_list:
+            btn_color = button.palette().color(Qg.QPalette.Button).name()
+            button.setStyleSheet(styling.generate_tool_button_stylesheet(btn_color))
+
+        frames = [self.ui.plain_text_logs, self.ui.plain_text_html,  self.ui.plain_text_processed]
         for frame in frames:
-            frame.setStyleSheet(self._generate_plain_text_edit_stylesheet())
+            frame.setStyleSheet(styling.generate_frame_stylesheet(styling.COLORS["entry_bg"]))
+
+        self.ui.frame.setStyleSheet(styling.generate_frame_stylesheet())
 
         self.i_stg = qt_icons.qt_icon_from_text_image(qt_icons.SETTINGS_ICON)
         self.ui.btn_settings.setIcon(self.i_stg)
@@ -200,7 +166,7 @@ class MainWindow(Qw.QMainWindow):
         # message box
         # self.help_msg.setStyleSheet("color: red; background-color: green;")
         self.help_msg.setWindowTitle("About page")
-        self.help_msg.setText(HELP_TEXT)
+        self.help_msg.setText(config.HELP_TEXT)
 
     @Qc.Slot()
     def log(self, msg, log_lvl=logging.INFO, time=5000):
@@ -212,43 +178,14 @@ class MainWindow(Qw.QMainWindow):
             now = datetime.now()
             ui_log = "<span>[<span style='color: {};'>{}</span>] [{}] - {}</span>"
             keys = {logging.INFO: "INFO", logging.WARNING: "WARN", logging.ERROR: "ERROR"}
-            self.ui.plain_text_logs.appendHtml(ui_log.format(LOGS_COLORS[log_lvl],
+            self.ui.plain_text_logs.appendHtml(ui_log.format(styling.LOGS_COLORS[log_lvl],
                                                              keys[log_lvl],
                                                              now.strftime("%H:%M:%S"),
                                                              msg.capitalize()))
             s_font = self.ui.statusbar.font()
-            self.ui.statusbar.setStyleSheet(f"color: {LOGS_COLORS[log_lvl]}")
+            self.ui.statusbar.setStyleSheet(f"color: {styling.LOGS_COLORS[log_lvl]}")
             self.ui.statusbar.setFont(s_font)
             self.ui.statusbar.showMessage(bar_msg, time)
-
-    @staticmethod
-    def _generate_button_stylesheet(hex_color):
-        c = hex_color
-        lighter_c = change_lightness(c, 0.1)
-        light_c = change_lightness(c, 0.05)
-        dark_c = change_lightness(c, -0.05)
-        darker_c = change_lightness(c, -0.15)
-
-        ss = ""
-        ss += "QPushButton {"
-        ss += f"background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 {light_c}, stop:1 {c});"
-        ss += f"border-radius:3px; border: solid {darker_c}; "
-        ss += "border-width: 1px 2px 2px 1px;"
-        ss += "padding: 10px 15px 10px 15px;"
-        ss += "}"
-        ss += "QPushButton:hover {"
-        ss += f"background-color: qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 {lighter_c}, stop:1 {light_c});"
-        ss += "}"
-        ss += f"QPushButton:pressed {{background-color: {dark_c};}}"
-        ss_tb = ss.replace("QPushButton", "QToolButton")
-        ss_tb = ss_tb.replace("padding: 10px 15px 10px 15px;", "padding: 7px 7px 7px 7px;")
-        # print(ss_tb)
-        return ss + ss_tb
-
-    @staticmethod
-    def _generate_plain_text_edit_stylesheet():
-        ss = "QFrame {border-width: 1; border-radius: 3; border-style: solid; border-color: rgb(180, 180, 180)}"
-        return ss
 
 
 def boolean_string(s):
@@ -275,7 +212,7 @@ if __name__ == '__main__':
         exit(0)
 
     # Initiate logger
-    setup_logging(args.log_level, args.logs_file)
+    config.setup_logging(__package__, args.log_level, args.logs_file)
 
     # initiate App
     app = Qw.QApplication(sys.argv)
