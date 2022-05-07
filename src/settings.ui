@@ -60,6 +60,13 @@
          <item>
           <widget class="QLineEdit" name="ledit_save_path"/>
          </item>
+         <item>
+          <widget class="QPushButton" name="btn_change">
+           <property name="text">
+            <string>Change</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>

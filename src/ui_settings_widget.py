@@ -59,6 +59,11 @@ class Ui_stg_form(object):
 
         self.horizontalLayout_2.addWidget(self.ledit_save_path)
 
+        self.btn_change = QPushButton(self.wid_save_path)
+        self.btn_change.setObjectName(u"btn_change")
+
+        self.horizontalLayout_2.addWidget(self.btn_change)
+
 
         self.verticalLayout.addWidget(self.wid_save_path)
 
@@ -118,6 +123,7 @@ class Ui_stg_form(object):
         self.cbox_clear_elements.setText(QCoreApplication.translate("stg_form", u"Clear previously generated HTML elements before processing", None))
         self.cbox_save_origins.setText(QCoreApplication.translate("stg_form", u"Save original text before processing", None))
         self.label.setText(QCoreApplication.translate("stg_form", u"Saved HTML file path:", None))
+        self.btn_change.setText(QCoreApplication.translate("stg_form", u"Change", None))
         self.btn_ok.setText(QCoreApplication.translate("stg_form", u"Ok", None))
         self.btn_cancel.setText(QCoreApplication.translate("stg_form", u"Cancel", None))
     # retranslateUi
