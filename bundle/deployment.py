@@ -32,6 +32,6 @@ if __name__ == '__main__':
     # ----+ freeze command -----+
     additional_param = ""
     if sys.platform.lower() == "darwin" or sys.platform.lower() == "win32":
-        app_icon = join_path(join_path(main_path, "icons"), "app.ico")
+        app_icon = join_path(join_path(main_path, "images"), "app.ico")
         additional_param = "-i {}".format(app_icon)
     deploy_command(deploy_path, app_path, app_name, additional_param)

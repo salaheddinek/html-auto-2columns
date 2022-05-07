@@ -4,13 +4,41 @@ import logging
 
 
 HELP_TEXT = """
-Modify Shopify page code to add 2 columns sections. This is done by
-replacing <h6> elements that contain the following texts:
-###start### (or ###start_inv### to inverse columns), ###next###, ###end###.
+Modify HTML page code to add 2 columns sections. Examples can be found in our GitHub page:
+https://github.com/salaheddinek/html-auto-2columns
+
+Following these steps will get the desired results:
+
+1. Copy the CSS code to your website, this need to be done only once.
+
+2. Insert <h6> titles with the according tags in order to wrap the sections that need to be formatted:
+    * For direct 2 columns section insert:
+        - <h6> ... ###start### ... </h6>
+        - Followed by the content of the first columns.
+        - Followed by <h6> ... ###next### ... </h6>.
+        - Followed by the content of the second column
+        - Followed  by <h6> ... ###end### ... </h6>.
+
+   * For opposite sides 2 columns:
+        - <h6> ... ###start_inv### ... </h6>
+        - Followed by the content of the second columns.
+        - Followed by <h6> ... ###next### ... </h6>.
+        - Followed by the content of the first column
+        - Followed  by <h6> ... ###end### ... </h6>.
+
+3. Copy the source HTML code and paste it in the application Original HTML text entry.
+
+4. Click on PROCESS button.
+
+5. Copy the result HTML code and replace the original one on the website
 """
+
+USE_WORKING_DIR = False
 
 
 def get_working_dir():
+    if USE_WORKING_DIR:
+        return os.getcwd()
     if getattr(sys, 'frozen', False):
         # If the application is run as a bundle, the PyInstaller bootloader
         # extends the sys module by a flag frozen=True and sets the app

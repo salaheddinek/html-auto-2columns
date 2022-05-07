@@ -47,10 +47,13 @@ class HtmlFormatter(Qc.QObject):
         self.num_cleared_previous_html_elements = 0
         previous_type = Types.END
         out_html_data = in_html_text
-
-        h6_elements = self._get_h6_html_data(in_html_text)
         if remove_generated_elements:
-            out_html_data = self._remove_h6_elements(h6_elements, out_html_data)
+            out_html_data = self._remove_h6_elements(out_html_data)
+
+        h6_elements = self._get_h6_html_data(out_html_data)
+        if remove_generated_elements:
+            self.log.emit(f"Cleared '{len(h6_elements)}' h6 elements, '{self.num_line_breaks}'  line breaks and "
+                          f"'{self.num_cleared_previous_html_elements}' generated patterns", logging.INFO, 5000)
 
         error_msg = "ERROR: wrong h6 sequence {}->{}. Possible sequences: START->NEXT->END or START_INV->NEXT->END."
         num_sequences = 0
@@ -119,7 +122,7 @@ class HtmlFormatter(Qc.QObject):
     def _replace_substring(in_old, in_idx_start, in_idx_end, in_new_char):
         return in_old[:in_idx_start] + in_new_char + in_old[in_idx_end + 1:]
 
-    def _remove_h6_elements(self, in_h6_elements, in_html_data):
+    def _remove_h6_elements(self, in_html_data):
         out_html_data = in_html_data
 
         num_ss_divs = 0
@@ -132,11 +135,8 @@ class HtmlFormatter(Qc.QObject):
             num_ss_divs += out_html_data.count(pattern)
             out_html_data = out_html_data.replace(pattern, '')
 
-        self.num_cleared_h6 = len(in_h6_elements)
+        self.num_line_breaks = num_line_breaks
         self.num_cleared_previous_html_elements = num_ss_divs
-        self.log.emit(f"Cleared '{len(in_h6_elements)}' h6 elements, '{num_line_breaks}' "
-                      f"line breaks and '{num_ss_divs}' generated patterns", logging.INFO, 5000)
-
         return out_html_data
 
     def _append_to_file(self, file_path, original_html, is_ok, line_length=120):

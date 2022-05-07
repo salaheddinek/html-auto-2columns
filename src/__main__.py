@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-__version__ = '2.0'
+__version__ = '2.2.0'
 __author__ = 'Salah Eddine Kabbour'
 __package__ = " html-auto-2columns"
 
@@ -108,6 +108,17 @@ class MainWindow(Qw.QMainWindow):
             self.ui.wid_settings.show()
             self.ui.wid_html.hide()
 
+    def change_save_path(self):
+        name = Qw.QFileDialog.getSaveFileName(self, 'Save File', dir=config.get_save_file_path())
+        name = name[0]
+        if name != "":
+            self.ui_settings.ledit_save_path.setText(name)
+
+    def copy_to_clipboard(self):
+        clipboard = Qg.QClipboard()
+        clipboard.setText(self.ui.plain_text_processed.toPlainText())
+        self.log("Copied processed HTML text to clipboard")
+
     def _connect_signals(self):
         self.ui.btn_process.clicked.connect(self.process_html)
         self.ui.btn_clear.clicked.connect(self.clear_entries)
@@ -115,15 +126,17 @@ class MainWindow(Qw.QMainWindow):
         self.ui.btn_quit.clicked.connect(self.close_app)
         self.ui.btn_logs.clicked.connect(self.show_hide_logs)
         self.ui.btn_help.clicked.connect(self.help_msg.exec)
+        self.ui.btn_copy.clicked.connect(self.copy_to_clipboard)
 
         self.ui_settings.cbox_save_origins.clicked.connect(self.enable_disable_save_path_line_edit)
         self.ui_settings.btn_ok.clicked.connect(self.save_settings)
         self.ui_settings.btn_cancel.clicked.connect(self.cancel_settings)
+        self.ui_settings.btn_change.clicked.connect(self.change_save_path)
         # Qc.QObject.connect(self.ui.btn_process, Qc.SIGNAL("clicked()"), self.process_link())
 
     def _style_app(self):
         self.Buttons_list = [self.ui.btn_process, self.ui.btn_quit, self.ui.btn_clear, self.ui.btn_help,
-                             self.ui.btn_logs, self.ui.btn_settings,
+                             self.ui.btn_logs, self.ui.btn_settings, self.ui.btn_copy, self.ui_settings.btn_change,
                              self.ui_settings.btn_ok, self.ui_settings.btn_cancel]
         for button in self.Buttons_list:
             btn_color = button.palette().color(Qg.QPalette.Button).name()
@@ -138,6 +151,8 @@ class MainWindow(Qw.QMainWindow):
         for frame in frames:
             frame.setStyleSheet(styling.generate_frame_stylesheet(styling.COLORS["entry_bg"]))
 
+        self.ui_settings.ledit_save_path.setStyleSheet(
+            styling.generate_line_edit_stylesheet(styling.COLORS["entry_bg"]))
         self.ui.frame.setStyleSheet(styling.generate_frame_stylesheet())
 
         self.i_stg = qt_icons.qt_icon_from_text_image(qt_icons.SETTINGS_ICON)
@@ -153,6 +168,9 @@ class MainWindow(Qw.QMainWindow):
         self.i_q = qt_icons.qt_icon_from_text_image(qt_icons.EXIT_ICON)
         self.ui.btn_quit.setIcon(self.i_q)
 
+        self.i_cp = qt_icons.qt_icon_from_text_image(qt_icons.COPY_ICON)
+        self.ui.btn_copy.setIcon(self.i_cp)
+
         self.i_c = qt_icons.qt_icon_from_text_image(qt_icons.CLEAR_ICON)
         self.ui.btn_clear.setIcon(self.i_c)
         self.ui_settings.btn_cancel.setIcon(self.i_c)
@@ -162,6 +180,9 @@ class MainWindow(Qw.QMainWindow):
 
         self.i_sv = qt_icons.qt_icon_from_text_image(qt_icons.SAVE_ICON)
         self.ui_settings.btn_ok.setIcon(self.i_sv)
+
+        self.i_ch = qt_icons.qt_icon_from_text_image(qt_icons.CHANGE_ICON)
+        self.ui_settings.btn_change.setIcon(self.i_ch)
 
         # message box
         # self.help_msg.setStyleSheet("color: red; background-color: green;")
@@ -196,7 +217,10 @@ def boolean_string(s):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                     description='Download links from a specific website')
+                                     description='Modify Shopify page code to add 2 columns sections. This is done by '
+                                                 'replacing <h6> elements that contain the following texts: '
+                                                 '###start### (or ###start_inv### to inverse columns), ###next###, '
+                                                 '###end###.')
     parser.add_argument('-s', '--style', help='Qt application style', type=str,
                         default="Fusion", metavar='\b')
     parser.add_argument('-l', '--log_level', help='FATAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, '

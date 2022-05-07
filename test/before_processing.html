@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <title>Two columns example page</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Wikivoyage_favicon.svg/32px-Wikivoyage_favicon.svg.png">
+        <style type="text/css">
+            html,
+            body {
+                background-color: #f7f7f7;
+                color: #404040;
+            }
+            body {
+                font-family: "DejaVu Sans Mono", "Liberation Mono", Monaco, Menlo, Inconsolata, "Andale Mono", monospace;
+                font-size: 125.01%;
+                line-height: 1.5;
+            }
+            h1 {
+                text-align: center;
+            }
+            .page_container {
+                margin: 5em 10em 5em 10em;
+            }
+            .ss_container {
+                display: flex;
+                align-items: center;
+            }
+
+            .ss_column_1 {
+                width: 48%;
+                margin-right: 1em;
+                margin-left: 0em;
+                order: 1;
+            }
+
+            .ss_column_2 {
+                width: 48%;
+                margin-right: 0em;
+                margin-left: 1em;
+                order: 2;
+            }
+            img {
+                max-width: 100%;
+            }
+            @media only screen and (max-width: 600px) {
+                .page_container {
+                    margin: 1em 1em 1em 1em;
+                }
+                .ss_container {
+                    display: initial;
+                    align-items: initial;
+                }
+                .ss_column_1,
+                .ss_column_2 {
+                    float: none;
+                    width: 100%;
+                    margin-right: 0;
+                    margin-left: 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page_container">
+            <h1>Classical two columns example</h1>
+
+            <h6>
+                <span style="font-size: large;">
+                    <strong><span data-mce-fragment="1" color="#3b3d0f" style="color: #3b3d0f;" data-mce-style="color: #3b3d0f;">###start###</span></strong>
+                </span>
+            </h6>
+            <p>
+                Within the various uses of the word today, "nature" often refers to geology and wildlife. Nature can refer to the general realm of living plants and animals, and in some cases to the processes associated with inanimate
+                objects—the way that particular types of things exist and change of their own accord, such as the weather and geology of the Earth.
+            </p>
+
+            <h6>
+                <span style="font-size: large;">
+                    <strong><span data-mce-fragment="1" color="#3b3d0f" style="color: #3b3d0f;" data-mce-style="color: #3b3d0f;">###next###</span></strong>
+                </span>
+            </h6>
+
+            <img src="https://images.unsplash.com/photo-1471879832106-c7ab9e0cee23?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80" alt="Nature first image example" />
+
+            <h6>
+                <span style="font-size: large;">
+                    <strong><span data-mce-fragment="1" color="#3b3d0f" style="color: #3b3d0f;" data-mce-style="color: #3b3d0f;">###end###</span></strong>
+                </span>
+            </h6>
+
+            <h6>
+                <span style="font-size: large;">
+                    <strong><span data-mce-fragment="1" color="#3b3d0f" style="color: #3b3d0f;" data-mce-style="color: #3b3d0f;">###start_inv###</span></strong>
+                </span>
+            </h6>
+            <p>
+                It is often taken to mean the "natural environment" or wilderness—wild animals, rocks, forest, and in general those things that have not been substantially altered by human intervention, or which persist despite human
+                intervention.
+            </p>
+
+            <h6>
+                <span style="font-size: large;">
+                    <strong><span data-mce-fragment="1" color="#3b3d0f" style="color: #3b3d0f;" data-mce-style="color: #3b3d0f;">###next###</span></strong>
+                </span>
+            </h6>
+
+            <img src="https://images.unsplash.com/photo-1485970247670-34cd80f5a996?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80" alt="Nature second image example" />
+            <h6>
+                <span style="font-size: large;">
+                    <strong><span data-mce-fragment="1" color="#3b3d0f" style="color: #3b3d0f;" data-mce-style="color: #3b3d0f;">###end###</span></strong>
+                </span>
+            </h6>
+
+            <h2>References</h2>
+            <p>Text was taken from this Wikipedia <a href="https://en.wikipedia.org/wiki/Nature">page</a>.</p>
+            <p>The first image was taken from this Unsplash <a href="https://unsplash.com/photos/Kp9z6zcUfGw">page</a>. And the second one from this <a href="https://unsplash.com/photos/5fedGbqYwvM">page</a>.</p>
+            <p>The Favicon was taken from this wikipedia <a href="https://commons.wikimedia.org/wiki/File:Wikivoyage_favicon.svg">page</a>.</p>
+        </div>
+    </body>
+</html>

@@ -3,7 +3,9 @@ import logging
 
 
 COLORS = {
-    "entry_bg": "rgb(250, 250, 250)",
+    "entry_bg": "#fafafa",
+    "borders": "#b4b4b4",
+    "borders_focus": "#9c9cc9",
 }
 
 LOGS_COLORS = {
@@ -58,9 +60,22 @@ def generate_tool_button_stylesheet(hex_color):
     return ss
 
 
-def generate_frame_stylesheet(in_bg_color=""):
-    ss = "QFrame {border-width: 1; border-radius: 3; border-style: solid; border-color: rgb(180, 180, 180);"
-    if in_bg_color != "":
-        ss += f"background-color: {in_bg_color};"
-    ss += "}"
+def generate_frame_stylesheet(bg_color="", exclusive_id=""):
+    ss = "QFrame"
+
+    ss += f"{{border-width: 1; border-radius: 3; border-style: solid; border-color: {COLORS['borders']};}}"
+    if bg_color != "":
+        ss += f"QFrame{{background-color: {bg_color};}}"
+        ss += f"QFrame::disabled{{background-color: {change_lightness(bg_color, -0.1)};}}"
+        ss += f"QFrame::focus{{border-color: {COLORS['borders_focus']};border-width: 1.55;}}"
+
+    if exclusive_id != "":
+        ss = ss.replace("QFrame", f"QFrame#{exclusive_id}")
     return ss
+
+
+def generate_line_edit_stylesheet(bg_color=""):
+    frame_ss = generate_frame_stylesheet(bg_color=bg_color)
+    frame_ss = frame_ss.replace("QFrame", "QLineEdit")
+    frame_ss += "QLineEdit{padding: 7px;}"
+    return frame_ss
