@@ -137,7 +137,8 @@ class MainWindow(Qw.QMainWindow):
     def _style_app(self):
         self.Buttons_list = [self.ui.btn_process, self.ui.btn_quit, self.ui.btn_clear, self.ui.btn_help,
                              self.ui.btn_logs, self.ui.btn_settings, self.ui.btn_copy, self.ui_settings.btn_change,
-                             self.ui_settings.btn_ok, self.ui_settings.btn_cancel]
+                             self.ui_settings.btn_ok, self.ui_settings.btn_cancel, self.ui.btn_compact,
+                             self.ui.btn_indent]
         for button in self.Buttons_list:
             btn_color = button.palette().color(Qg.QPalette.Button).name()
             button.setStyleSheet(styling.generate_button_stylesheet(btn_color))
@@ -151,8 +152,11 @@ class MainWindow(Qw.QMainWindow):
         for frame in frames:
             frame.setStyleSheet(styling.generate_frame_stylesheet(styling.COLORS["entry_bg"]))
 
-        self.ui_settings.ledit_save_path.setStyleSheet(
-            styling.generate_line_edit_stylesheet(styling.COLORS["entry_bg"]))
+        line_edits = [self.ui_settings.ledit_save_path, self.ui_settings.ledit_r_class_tags,
+                      self.ui_settings.ledit_r_attributes_tags, self.ui_settings.ledit_no_content_tags]
+        for line_edit in line_edits:
+            line_edit.setStyleSheet(styling.generate_line_edit_stylesheet(styling.COLORS["entry_bg"]))
+
         self.ui.frame.setStyleSheet(styling.generate_frame_stylesheet())
 
         self.i_stg = qt_icons.qt_icon_from_text_image(qt_icons.SETTINGS_ICON)
@@ -183,6 +187,12 @@ class MainWindow(Qw.QMainWindow):
 
         self.i_ch = qt_icons.qt_icon_from_text_image(qt_icons.CHANGE_ICON)
         self.ui_settings.btn_change.setIcon(self.i_ch)
+
+        self.i_t = qt_icons.qt_icon_from_text_image(qt_icons.TREE_ICON)
+        self.ui.btn_indent.setIcon(self.i_t)
+
+        self.i_f = qt_icons.qt_icon_from_text_image(qt_icons.FLOW_ICON)
+        self.ui.btn_compact.setIcon(self.i_f)
 
         # message box
         # self.help_msg.setStyleSheet("color: red; background-color: green;")

@@ -1191,6 +1191,20 @@
      <widget class="QWidget" name="wid_quit" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
+        <widget class="QPushButton" name="btn_indent">
+         <property name="text">
+          <string>Indent HTML</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_compact">
+         <property name="text">
+          <string>Compact HTML</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>

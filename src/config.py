@@ -33,7 +33,7 @@ Following these steps will get the desired results:
 5. Copy the result HTML code and replace the original one on the website
 """
 
-USE_WORKING_DIR = False
+USE_WORKING_DIR = True
 
 
 def get_working_dir():
