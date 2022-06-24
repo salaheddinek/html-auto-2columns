@@ -619,10 +619,10 @@ p7nuKGfLJf+ESisxIAPZYQu/XG+cd85L7y+LGJA6hezUTyViT1icKpgW+6WKAuXOIcu9OtO3ZflmFdsH
 """
 
 FLOW_ICON= """
-eJzrDPBz5+WS4mJgYOD19HAJAtIBIMzBBiT7BD+tBVJsSd7uLgz/QXDB3uWTGRgY/TxdHEMq5ry9s5G3yUHCIdEgL3XGgSOGL3QLGXRfyh4+wtmzewdrWICD
-4p3dBQrvV/cYzqn8x+lxInWmSm74vX0WsfN8e5jt1h3/8315W9B6+Szz50n/M+7XL9bgc2Sv2nvvx2mdxL8r5zicaJjAqMjsxNbClp64as2rBa93+j/6+vvd
-9s8rXnuqC3TZNSbX79wX8d/F6Xq+79wEdQEjhRSwnoUHIy2uxvYuXWM/VZijVNji+9w7+668bi9iAhvGwyEJVpkx9Xqcyxt1hTkOGr9kX27t+MrSIgyVglvM
-Axe4kPb+2JEqpkOcITGpoebB84JKmdBUAO19t7/gVawx0EenOFvubGVGsrDoOt8JrGJTVFh/MyUyBx5TF73dBQxrBk9XP5d1TglNAHwDnUw=
+eJzrDPBz5+WS4mJgYOD19HAJAtIBIMzBBiT7BD+tBVJsSd7uLgz/QXDB3uWTGRgYfT1dHEMq5ry9vZfzkIOMQ6Eo+ybRjV6ZBVzhAkcYXQpYlwvorm26EbWz
+TTkjdeFHh4py8UXvw91OtB7ff6L9+kuPS/9f7ZO3ED9qe/zQ4ccbt5kZxsptivmeZ1q5811cn2t9pP2Xwwt0JutU3Hw/ec73TBs5Vcv80Ll2cuVMisxObC08
+HJICRgopDicaAj64WW09mib99eLrqu7Kbe8tGwOShXfMOx/10+jhXGG4sgmMcH1cdqeW/qua5vXidaSWX8Jksdlvbb9lr5yTFLMfq3IsAiG/JycH75bTLM/e
+FvJhd8G72P6NO6I3p2JRvTNeoohJ8Tu3sx+GK+55PL/3VaJ7t6mq59qPDKU7HTZ0rHbcDgxqBk9XP5d1TglNAMmHmZg=
 """
 
 
@@ -661,8 +661,6 @@ def boolean_string(s):
 
 
 if __name__ == '__main__':
-    print(png_image_to_text("/home/buser/codeProjects/html-auto-2columns/images/app.png"))
-    quit()
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                      description='Convert image to text files. Which can be embedded in python'
                                                  'scripts to use as Qt icons')
