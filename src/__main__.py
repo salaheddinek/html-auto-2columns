@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-__version__ = '3.0.2'
+__version__ = '3.0.3'
 __author__ = 'Salah Eddine Kabbour'
 __package__ = " html-auto-2columns"
 
