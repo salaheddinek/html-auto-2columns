@@ -4,6 +4,22 @@ import sys
 from os import path
 import os
 import shutil
+import re
+
+APP_NAME = "html_auto_2columns"
+ADD_VERSION_AS_SUFFIX = True
+
+
+def get_app_full_name(i_app_path):
+    name = APP_NAME
+    if ADD_VERSION_AS_SUFFIX:
+        with open(i_app_path, "r") as f:
+            txt = f.read()
+            v_re = r"^__version__ = ['\"]([^'\"]*)['\"]"
+            version = re.search(v_re, txt, re.M)
+            if version:
+                name += "_v" + version.group(1)
+    return name
 
 
 def is_file_accepted(i_file_path):
@@ -13,12 +29,12 @@ def is_file_accepted(i_file_path):
 
 
 if __name__ == '__main__':
-    app_name = "html_auto_2columns"
-
     main_path = path.dirname(sys.modules['__main__'].__file__)
     main_path = path.join(main_path, '..')
     deploy_path = path.join(main_path, 'deploy')
     app_path = path.join(main_path, 'src')
+
+    app_name = get_app_full_name(path.join(app_path, "__main__.py"))
 
     if os.path.exists(deploy_path):
         shutil.rmtree(deploy_path)

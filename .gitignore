@@ -6,6 +6,7 @@ __pycache__/
 build_ui.sh
 deploy/
 releases/
+local/
 
 # Pycharm
 .idea/

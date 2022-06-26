@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1257, 880)
+        MainWindow.resize(1257, 881)
         palette = QPalette()
         brush = QBrush(QColor(0, 0, 0, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -121,10 +121,17 @@ class Ui_MainWindow(object):
 
         self.frame = QFrame(self.wid_header)
         self.frame.setObjectName(u"frame")
+        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy)
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
         self.horizontalLayout = QHBoxLayout(self.frame)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.btn_wrap = QToolButton(self.frame)
+        self.btn_wrap.setObjectName(u"btn_wrap")
+
+        self.horizontalLayout.addWidget(self.btn_wrap)
+
         self.btn_logs = QToolButton(self.frame)
         self.btn_logs.setObjectName(u"btn_logs")
 
@@ -430,6 +437,10 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+#if QT_CONFIG(tooltip)
+        self.btn_wrap.setToolTip(QCoreApplication.translate("MainWindow", u"Line wrap mode On/Off", None))
+#endif // QT_CONFIG(tooltip)
+        self.btn_wrap.setText(QCoreApplication.translate("MainWindow", u"line_wrap", None))
 #if QT_CONFIG(tooltip)
         self.btn_logs.setToolTip(QCoreApplication.translate("MainWindow", u"Show/Hide Logs", None))
 #endif // QT_CONFIG(tooltip)

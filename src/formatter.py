@@ -2,7 +2,9 @@ from enum import Enum
 import re
 import PySide6.QtCore as Qc
 import logging
+import bs4
 from datetime import datetime
+import tree_processing
 
 
 class Types(Enum):
@@ -41,23 +43,32 @@ class HtmlFormatter(Qc.QObject):
         super().__init__(parent)
         self.num_cleared_previous_html_elements = None
         self.num_cleared_h6 = None
+        self.depth_correctness_idx = 0
 
-    def process(self, in_html_text, remove_generated_elements=True, save_file_path=""):
+    def process(self, in_html_text, in_settings):
         self.num_cleared_h6 = 0
         self.num_cleared_previous_html_elements = 0
         previous_type = Types.END
         out_html_data = in_html_text
-        if remove_generated_elements:
-            out_html_data = self._remove_h6_elements(out_html_data)
 
+        out_html_data = self._pre_processing(out_html_data, in_settings)
+
+        if in_settings["clear_elements"]:
+            out_html_data = self._remove_h6_elements(out_html_data)
+        out_html_data = self._check_for_merged_h6_tags(out_html_data)
         h6_elements = self._get_h6_html_data(out_html_data)
-        if remove_generated_elements:
+        if in_settings["clear_elements"]:
             self.log.emit(f"Cleared '{len(h6_elements)}' h6 elements, '{self.num_line_breaks}'  line breaks and "
                           f"'{self.num_cleared_previous_html_elements}' generated patterns", logging.INFO, 5000)
 
         error_msg = "ERROR: wrong h6 sequence {}->{}. Possible sequences: START->NEXT->END or START_INV->NEXT->END."
         num_sequences = 0
         is_ok = True
+
+        if not self._check_h6_depth_correctness(out_html_data):
+            error_msg = f"ERROR: h6 elements do not have the same depth, error in h6 num '{self.depth_correctness_idx}'"
+            is_ok = False
+
         for h6_tag in h6_elements:
             if not is_ok:
                 break
@@ -95,7 +106,8 @@ class HtmlFormatter(Qc.QObject):
             error_msg = "ERROR:  h6 sequence does not end with END tag. " \
                         "Possible sequences: START->NEXT->END or START_INV->NEXT->END."
 
-        self._append_to_file(save_file_path, in_html_text, is_ok)
+        if in_settings["save_origins_to_file"]:
+            self._append_to_file(in_settings["save_file_path"], in_html_text, is_ok)
 
         if not is_ok:
             self.log.emit(error_msg, logging.ERROR, 5000)
@@ -105,6 +117,83 @@ class HtmlFormatter(Qc.QObject):
                       " h6 tags).".format(num_sequences, self.num_cleared_previous_html_elements, self.num_cleared_h6
                                           ), logging.INFO, 5000)
         return out_html_data
+
+    def _check_for_merged_h6_tags(self, in_html_text):
+        doc = bs4.BeautifulSoup(in_html_text, "html.parser")
+        num_correction = 0
+        for match in doc.find_all("h6"):
+            match_str = str(match).lower()
+            for init_marker in ["###start###", "###start_inv###"]:
+                if init_marker in match_str and "###end###" in match_str:
+                    new_div_before1 = doc.new_tag("h6")
+                    new_div_before1.string = "###end###"
+                    match.insert_before(new_div_before1)
+                    new_div_before2 = doc.new_tag("h6")
+                    new_div_before2.string = init_marker
+                    match.insert_before(new_div_before2)
+                    num_correction += 1
+
+        for match in doc.find_all("h6"):
+            match_str = str(match).lower()
+            for init_marker in ["###start###", "###start_inv###"]:
+                if init_marker in match_str and "###end###" in match_str:
+                    match.decompose()
+                    continue
+
+        if num_correction != 0:
+            self.log.emit(f"corrected {num_correction} merge start and end h6 tags", logging.INFO, 5000)
+        return str(doc)
+
+    def _pre_processing(self, in_html_text, settings):
+        doc = bs4.BeautifulSoup(in_html_text, "html.parser")
+
+        if settings["pre_proc_clear_shopify_tags"]:
+            tree_processing.unwrap_shopify_useless_strong_tags(doc)
+            self.log.emit("unwrap_shopify_useless_strong_tags finished", logging.DEBUG, 5000)
+
+        if settings["pre_proc_unwrap_without_class"]:
+            doc = tree_processing.unwrap_tags_without_classes(doc, settings["pre_proc_unwrap_without_class_affected"])
+            self.log.emit("unwrap_tags_without_classes finished", logging.DEBUG, 5000)
+
+        if settings["pre_proc_remove_attributes"]:
+            doc = tree_processing.remove_none_class_attributes(doc, settings["pre_proc_remove_attributes_affected"])
+            self.log.emit("remove_none_class_attributes finished", logging.DEBUG, 5000)
+
+        if settings["pre_proc_unwrap_no_content"]:
+            doc = tree_processing.unwrap_tags_with_no_content(doc, settings["pre_proc_unwrap_no_content_affected"])
+            self.log.emit("unwrap_tags_with_no_content finished", logging.DEBUG, 5000)
+
+        if settings["pre_proc_group_consecutive"]:
+            doc = tree_processing.group_consecutive_tags(doc, settings["pre_proc_group_consecutive_affected"])
+            self.log.emit("pre_proc_group_consecutive finished", logging.DEBUG, 5000)
+
+        if settings["pre_proc_clear_shopify_tags"] or settings["pre_proc_unwrap_without_class"] or\
+                settings["pre_proc_remove_attributes"] or settings["pre_proc_unwrap_no_content"] or\
+                settings["pre_proc_group_consecutive"]:
+            self.log.emit("pre-processing successful!", logging.INFO, 5000)
+        return str(doc)
+
+    def _check_h6_depth_correctness(self, in_html_text):
+        doc = bs4.BeautifulSoup(in_html_text, "html.parser")
+        self.depth_correctness_idx = 0
+        for match in doc.find_all("h6"):
+            self.depth_correctness_idx += 1
+            father = match.parent
+
+            num_formatter_h6_tags = 0
+            for match_siblings in father.find_all("h6", recursive=False):
+                cur = Header6()
+                cur.text = str(match_siblings)
+                if cur.detect_type():
+                    num_formatter_h6_tags += 1
+            if num_formatter_h6_tags == 0:
+                self.depth_correctness_idx -= 1
+            self.log.emit(f"check_h6_depth_correctness: h6 idx:{self.depth_correctness_idx} "
+                          f"- num siblings:{num_formatter_h6_tags} - text:'{match.text}'", logging.DEBUG, 5000)
+
+            if num_formatter_h6_tags % 3 != 0:
+                return False
+        return True
 
     @staticmethod
     def _get_h6_html_data(in_html_text):
