@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1257</width>
-    <height>880</height>
+    <height>881</height>
    </rect>
   </property>
   <property name="palette">
@@ -495,6 +495,12 @@
        </item>
        <item>
         <widget class="QFrame" name="frame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -502,6 +508,16 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QToolButton" name="btn_wrap">
+            <property name="toolTip">
+             <string>Line wrap mode On/Off</string>
+            </property>
+            <property name="text">
+             <string>line_wrap</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QToolButton" name="btn_logs">
             <property name="toolTip">
@@ -1190,6 +1206,20 @@
     <item>
      <widget class="QWidget" name="wid_quit" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QPushButton" name="btn_indent">
+         <property name="text">
+          <string>Indent HTML</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_compact">
+         <property name="text">
+          <string>Compact HTML</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">

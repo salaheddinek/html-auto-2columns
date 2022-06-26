@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.4
+## Created by: Qt User Interface Compiler version 6.3.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1257, 880)
+        MainWindow.resize(1257, 881)
         palette = QPalette()
         brush = QBrush(QColor(0, 0, 0, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -121,10 +121,17 @@ class Ui_MainWindow(object):
 
         self.frame = QFrame(self.wid_header)
         self.frame.setObjectName(u"frame")
+        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy)
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
         self.horizontalLayout = QHBoxLayout(self.frame)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.btn_wrap = QToolButton(self.frame)
+        self.btn_wrap.setObjectName(u"btn_wrap")
+
+        self.horizontalLayout.addWidget(self.btn_wrap)
+
         self.btn_logs = QToolButton(self.frame)
         self.btn_logs.setObjectName(u"btn_logs")
 
@@ -332,6 +339,16 @@ class Ui_MainWindow(object):
         self.wid_quit.setObjectName(u"wid_quit")
         self.horizontalLayout_5 = QHBoxLayout(self.wid_quit)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.btn_indent = QPushButton(self.wid_quit)
+        self.btn_indent.setObjectName(u"btn_indent")
+
+        self.horizontalLayout_5.addWidget(self.btn_indent)
+
+        self.btn_compact = QPushButton(self.wid_quit)
+        self.btn_compact.setObjectName(u"btn_compact")
+
+        self.horizontalLayout_5.addWidget(self.btn_compact)
+
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer)
@@ -421,6 +438,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
 #if QT_CONFIG(tooltip)
+        self.btn_wrap.setToolTip(QCoreApplication.translate("MainWindow", u"Line wrap mode On/Off", None))
+#endif // QT_CONFIG(tooltip)
+        self.btn_wrap.setText(QCoreApplication.translate("MainWindow", u"line_wrap", None))
+#if QT_CONFIG(tooltip)
         self.btn_logs.setToolTip(QCoreApplication.translate("MainWindow", u"Show/Hide Logs", None))
 #endif // QT_CONFIG(tooltip)
         self.btn_logs.setText(QCoreApplication.translate("MainWindow", u"logs", None))
@@ -437,6 +458,8 @@ class Ui_MainWindow(object):
         self.btn_clear.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Processed HTML text", None))
         self.btn_copy.setText(QCoreApplication.translate("MainWindow", u"Copy", None))
+        self.btn_indent.setText(QCoreApplication.translate("MainWindow", u"Indent HTML", None))
+        self.btn_compact.setText(QCoreApplication.translate("MainWindow", u"Compact HTML", None))
         self.btn_quit.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
     # retranslateUi
 

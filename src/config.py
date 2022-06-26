@@ -36,8 +36,8 @@ Following these steps will get the desired results:
 USE_WORKING_DIR = False
 
 
-def get_working_dir():
-    if USE_WORKING_DIR:
+def get_working_dir(use_current_working_dir=USE_WORKING_DIR):
+    if use_current_working_dir:
         return os.getcwd()
     if getattr(sys, 'frozen', False):
         # If the application is run as a bundle, the PyInstaller bootloader
@@ -51,6 +51,11 @@ def get_working_dir():
     return folder_path
 
 
+def get_config_file_path(package_name):
+    exe_dir = get_working_dir()
+    return os.path.join(exe_dir, package_name + "_config.json")
+
+
 def get_logs_path(package_name):
     parent_path = get_working_dir()
     return os.path.join(parent_path, package_name + ".log")
@@ -59,6 +64,25 @@ def get_logs_path(package_name):
 def get_save_file_path():
     parent_path = get_working_dir()
     return os.path.join(parent_path, "original_html_texts.txt")
+
+
+def get_default_settings():
+    default_settings = {
+            "clear_elements": True,
+            "save_origins_to_file": False,
+            "save_file_path": get_save_file_path(),
+            "indent_length": 4,
+            "pre_proc_clear_shopify_tags": False,
+            "pre_proc_unwrap_without_class": False,
+            "pre_proc_unwrap_without_class_affected": ["div", "span"],
+            "pre_proc_remove_attributes": False,
+            "pre_proc_remove_attributes_affected": ["p", "span", "strong", "b", "div", "u", "em", "h1", "h2"],
+            "pre_proc_unwrap_no_content": False,
+            "pre_proc_unwrap_no_content_affected": ["strong", "em", "u", "i", "span", "div"],
+            "pre_proc_group_consecutive": False,
+            "pre_proc_group_consecutive_affected": ["span", "strong", "em", "u", "i", "b"],
+        }
+    return default_settings
 
 
 def setup_logging(logger_name, logging_lvl, save_logs_to_file):
