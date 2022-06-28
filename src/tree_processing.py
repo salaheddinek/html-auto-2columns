@@ -72,7 +72,9 @@ def group_consecutive_tags(tree, tags_names="p"):
                 # print(html_text[r_idx:l_idx])
                 twin_tags = bs4.BeautifulSoup(html_text[r_idx:l_idx], "html.parser").find_all(search_tag)
                 replace_with = bridge
-                if twin_tags[0].attrs != twin_tags[1].attrs:
+                if len(twin_tags) != 2:
+                    replace_with = f"</{search_tag}>{dummy_tag}<{search_tag} {search_term_ext}"
+                elif twin_tags[0].attrs != twin_tags[1].attrs:
                     replace_with = f"</{search_tag}>{dummy_tag}<{search_tag} {search_term_ext}"
 
                 updated = True

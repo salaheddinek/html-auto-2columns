@@ -7,7 +7,7 @@ import shutil
 import re
 
 APP_NAME = "html_auto_2columns"
-ADD_VERSION_AS_SUFFIX = False
+ADD_VERSION_AS_SUFFIX = True
 
 
 def get_app_full_name(i_app_path):
