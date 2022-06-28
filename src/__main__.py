@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-__version__ = '3.1.2'
+__version__ = '3.1.3'
 __author__ = 'Salah Eddine Kabbour'
-__package__ = " html-auto-2columns"
+__package__ = "html-auto-2columns"
 
 import tree_processing
 from ui_mainwindow import Ui_MainWindow
@@ -325,7 +325,9 @@ class MainWindow(Qw.QMainWindow):
         self.i_wn = qt_icons.qt_icon_from_text_image(qt_icons.LINE_WRAP_OFF_ICON)
 
     def display_about_page(self):
-        self.window_message(config.HELP_TEXT, "About page")
+        text = f'<div style="text-align:center"><h1>{__package__}</h1><small>v{__version__}</small></div>'
+        text += config.HELP_TEXT
+        self.window_message(text, "About page")
 
     @Qc.Slot()
     def window_message(self, msg, title="Info", w=800, h=800):
