@@ -8,10 +8,25 @@ import tree_processing
 
 
 class Types(Enum):
-    START = 1
-    START_INV = 2
-    NEXT = 3
-    END = 4
+    START = 0
+    START_INV = 1
+    NEXT = 2
+    END = 3
+
+
+TYPE_TO_MARKER = {
+    Types.START: "###start###",
+    Types.START_INV: "###start_inv###",
+    Types.NEXT: "###next###",
+    Types.END: "###end###",
+}
+
+TYPES_MARKERS = {
+    "###start###": Types.START,
+    "###start_inv###": Types.START_INV,
+    "###next###": Types.NEXT,
+    "###end###": Types.END,
+}
 
 
 class Header6:
@@ -38,12 +53,12 @@ class Header6:
 
 class HtmlFormatter(Qc.QObject):
     log = Qc.Signal(str, int, int)
+    w_msg = Qc.Signal(str, str, int, int)
 
     def __init__(self, parent):
         super().__init__(parent)
         self.num_cleared_previous_html_elements = None
         self.num_cleared_h6 = None
-        self.depth_correctness_idx = 0
 
     def process(self, in_html_text, in_settings):
         self.num_cleared_h6 = 0
@@ -52,7 +67,7 @@ class HtmlFormatter(Qc.QObject):
         out_html_data = in_html_text
 
         out_html_data = self._pre_processing(out_html_data, in_settings)
-
+        # return out_html_data
         if in_settings["clear_elements"]:
             out_html_data = self._remove_h6_elements(out_html_data)
         out_html_data = self._check_for_merged_h6_tags(out_html_data)
@@ -66,7 +81,11 @@ class HtmlFormatter(Qc.QObject):
         is_ok = True
 
         if not self._check_h6_depth_correctness(out_html_data):
-            error_msg = f"ERROR: h6 elements do not have the same depth, error in h6 num '{self.depth_correctness_idx}'"
+            error_msg = f"ERROR: h6 elements do not have the same depth."
+            window_msg = "ERROR: some <h6> tags do not have the appropriate depth in the HTML Tree:\n\n"
+            window_msg += self.get_h6_positions_report_str(out_html_data)
+            window_msg += "\nPlease correct the tags so the each 3 consecutive tags have in the same depth."
+            self.w_msg.emit(window_msg, "Depth error", 900, 500)
             is_ok = False
 
         for h6_tag in h6_elements:
@@ -117,6 +136,31 @@ class HtmlFormatter(Qc.QObject):
                       " h6 tags).".format(num_sequences, self.num_cleared_previous_html_elements, self.num_cleared_h6
                                           ), logging.INFO, 5000)
         return out_html_data
+
+    @staticmethod
+    def get_h6_positions_report(in_html_text):
+        doc = bs4.BeautifulSoup(in_html_text, "html.parser")
+        report = []
+        for match in doc.find_all("h6"):
+            match_str = str(match).lower()
+            for marker in TYPES_MARKERS:
+                if marker in match_str:
+                    report_line = [marker]
+                    cur_tag = match
+                    while cur_tag:
+                        report_line += [cur_tag.name]
+                        cur_tag = cur_tag.parent
+                    report += [report_line]
+
+        return report
+
+    @staticmethod
+    def get_h6_positions_report_str(in_html_text):
+        report_str = ""
+        for i, line in enumerate(HtmlFormatter.get_h6_positions_report(in_html_text)):
+            parents = list(reversed(line))
+            report_str += f"{i}. Depth:{len(line) - 1}  =>  {' -> '.join(parents)}\n"
+        return report_str
 
     def _check_for_merged_h6_tags(self, in_html_text):
         doc = bs4.BeautifulSoup(in_html_text, "html.parser")
@@ -175,9 +219,9 @@ class HtmlFormatter(Qc.QObject):
 
     def _check_h6_depth_correctness(self, in_html_text):
         doc = bs4.BeautifulSoup(in_html_text, "html.parser")
-        self.depth_correctness_idx = 0
+        depth_correctness_idx = 0
         for match in doc.find_all("h6"):
-            self.depth_correctness_idx += 1
+            depth_correctness_idx += 1
             father = match.parent
 
             num_formatter_h6_tags = 0
@@ -187,8 +231,8 @@ class HtmlFormatter(Qc.QObject):
                 if cur.detect_type():
                     num_formatter_h6_tags += 1
             if num_formatter_h6_tags == 0:
-                self.depth_correctness_idx -= 1
-            self.log.emit(f"check_h6_depth_correctness: h6 idx:{self.depth_correctness_idx} "
+                depth_correctness_idx -= 1
+            self.log.emit(f"check_h6_depth_correctness: h6 idx:{depth_correctness_idx} "
                           f"- num siblings:{num_formatter_h6_tags} - text:'{match.text}'", logging.DEBUG, 5000)
 
             if num_formatter_h6_tags % 3 != 0:

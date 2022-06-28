@@ -13,7 +13,11 @@ def unwrap_shopify_useless_strong_tags(tree):
 def unwrap_tags_without_classes(tree, tag_name="div"):
     for match in tree.find_all(tag_name):
         if "class" not in match.attrs:
-            match.unwrap()
+            if match.parent:
+                p_name = match.parent.name
+                if p_name not in ["body", '[document]', "html", "head"]:
+                    match.unwrap()
+
     return tree
 
 
@@ -52,12 +56,15 @@ def group_consecutive_tags(tree, tags_names="p"):
         while updated:
             updated = False
             for bridge in ["", " "]:
+                # TODO: use beautifulsoup for this issue later
                 search_term = f"</{search_tag}>{bridge}<{search_tag}"
                 idx = html_text.find(search_term)
                 if idx == -1:
                     continue
                 search_term_ext = html_text[idx + len(search_term): html_text.find(">", idx + len(search_term)) + 1]
                 r_idx = html_text.rfind(f"<{search_tag}", 0, idx)
+                if search_tag == "b" and html_text[r_idx + 2] == "r": # for <br> case
+                    r_idx = html_text.rfind(f"<{search_tag}", 0, r_idx - 1)
                 l_idx = html_text.find(f"</{search_tag}>", idx + 1)
                 if l_idx == -1 or r_idx == -1:
                     print("WARNING: this should not have happened (find group_consecutive_tags)")
