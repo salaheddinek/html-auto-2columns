@@ -77,6 +77,11 @@ class HtmlFormatter(Qc.QObject):
                           f"'{self.num_cleared_previous_html_elements}' generated patterns", logging.INFO, 5000)
 
         error_msg = "ERROR: wrong h6 sequence {}->{}. Possible sequences: START->NEXT->END or START_INV->NEXT->END."
+        window_msg = "ERROR: some <h6> tags do not have the appropriate order:\n\n"
+        window_msg += self.get_h6_positions_report_str(out_html_data)
+        window_msg += "\nPlease correct the tags so that all sequences are as follows:\n" \
+                      "START->NEXT->END or START_INV->NEXT->END."
+
         num_sequences = 0
         is_ok = True
 
@@ -84,8 +89,7 @@ class HtmlFormatter(Qc.QObject):
             error_msg = f"ERROR: h6 elements do not have the same depth."
             window_msg = "ERROR: some <h6> tags do not have the appropriate depth in the HTML Tree:\n\n"
             window_msg += self.get_h6_positions_report_str(out_html_data)
-            window_msg += "\nPlease correct the tags so the each 3 consecutive tags have in the same depth."
-            self.w_msg.emit(window_msg, "Depth error", 900, 500)
+            window_msg += "\nPlease correct the tags so that each 3 consecutive tags have in the same depth."
             is_ok = False
 
         for h6_tag in h6_elements:
@@ -130,6 +134,8 @@ class HtmlFormatter(Qc.QObject):
 
         if not is_ok:
             self.log.emit(error_msg, logging.ERROR, 5000)
+            if window_msg != "":
+                self.w_msg.emit(window_msg, "Error message", 900, 500)
             return ""
 
         self.log.emit("Successfully inserted '{}' two-columns sections (cleared '{}' previously generated HTML and '{}'"
