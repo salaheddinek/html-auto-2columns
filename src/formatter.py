@@ -135,7 +135,7 @@ class HtmlFormatter(Qc.QObject):
         if not is_ok:
             self.log.emit(error_msg, logging.ERROR, 5000)
             if window_msg != "":
-                self.w_msg.emit(window_msg, "Error message", 900, 500)
+                self.w_msg.emit(window_msg, "Error message", 1000, 800)
             return ""
 
         self.log.emit("Successfully inserted '{}' two-columns sections (cleared '{}' previously generated HTML and '{}'"

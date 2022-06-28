@@ -330,7 +330,7 @@ class MainWindow(Qw.QMainWindow):
         self.window_message(text, "About page")
 
     @Qc.Slot()
-    def window_message(self, msg, title="Info", w=800, h=800):
+    def window_message(self, msg, title="Info", w=1000, h=800):
         txt = msg.replace("<h6>", "&lt;h6&gt;")
         txt = txt.replace("</h6>", "&lt;/h6&gt;")
         txt = txt.replace("\n", "<br/>")
