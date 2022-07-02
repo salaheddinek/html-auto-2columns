@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-__version__ = '3.1.4'
+__version__ = '3.2.0'
 __author__ = 'Salah Eddine Kabbour'
 __package__ = "html-auto-2columns"
 
@@ -330,23 +330,46 @@ class MainWindow(Qw.QMainWindow):
         self.window_message(text, "About page")
 
     @Qc.Slot()
-    def window_message(self, msg, title="Info", w=1000, h=800):
+    def window_message(self, msg, title="Info", minimum_width=800):
         txt = msg.replace("<h6>", "&lt;h6&gt;")
         txt = txt.replace("</h6>", "&lt;/h6&gt;")
         txt = txt.replace("\n", "<br/>")
 
-        msg_box = Qw.QMessageBox(self)
-        msg_box.setPalette(self.palette())
-        msg_box.setFont(self.font())
-        msg_box.setWindowTitle(title)
-        msg_box.setText(txt)
-        msg_box.show()
-        btn = msg_box.findChild(Qw.QPushButton)
-        btn.setFont(self.font())
+        used_font = self.font().__copy__()
+        used_size = used_font.pointSize()
+        if used_size > 2:
+            used_font.setPointSize(used_size - 2)
+
+        qd = Qw.QDialog(self)
+        qd.setModal(True)
+        qd.setPalette(self.palette())
+        qd.setWindowTitle(title)
+
+        layout = Qw.QVBoxLayout()
+        label = Qw.QLabel(txt, qd)
+        label.setTextFormat(Qc.Qt.RichText)
+        label.setWordWrap(True)
+        label.setPalette(self.palette())
+        label.setFont(used_font)
+        layout.addWidget(label)
+        mini_layout = Qw.QHBoxLayout()
+        h_spacer = Qw.QSpacerItem(40, 20, Qw.QSizePolicy.Policy.Expanding, Qw.QSizePolicy.Policy.Minimum)
+        mini_layout.addSpacerItem(h_spacer)
+        btn = Qw.QPushButton(qd)
         btn_color = btn.palette().color(Qg.QPalette.Button).name()
         btn.setStyleSheet(styling.generate_button_stylesheet(btn_color))
-        msg_box.setStyleSheet(f"QLabel {{min-width: {w}px; min-height: {h}px;}}")
-        msg_box.exec()
+        btn.setFont(used_font)
+        btn.setMinimumWidth(btn.minimumWidth())
+        btn.clicked.connect(qd.accept)
+        btn.setText("   OK   ")
+        mini_layout.addWidget(btn)
+        mini_layout.addSpacerItem(h_spacer)
+        layout.addLayout(mini_layout)
+        qd.setMinimumWidth(minimum_width)
+
+        qd.setLayout(layout)
+        qd.show()
+        qd.exec()
 
     @Qc.Slot()
     def log(self, msg, log_lvl=logging.INFO, time=5000):
