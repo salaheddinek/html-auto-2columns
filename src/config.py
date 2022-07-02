@@ -5,21 +5,23 @@ import logging
 
 HELP_TEXT = """
 Modify HTML page code to add 2 columns sections. Examples can be found in our GitHub page:
-https://github.com/salaheddinek/html-auto-2columns
+<a href="https://github.com/salaheddinek/html-auto-2columns">https://github.com/salaheddinek/html-auto-2columns</a>
 
-Following these steps will get the desired results:
+
+Following these steps will get the desired <b>results</b>: 
 
 1. Copy the CSS code to your website, this need to be done only once.
 
 2. Insert <h6> titles with the according tags in order to wrap the sections that need to be formatted:
-    * For direct 2 columns section insert:
+
+    <u>* For direct 2 columns section insert:</u>
         - <h6> ... ###start### ... </h6>
         - Followed by the content of the first columns.
         - Followed by <h6> ... ###next### ... </h6>.
         - Followed by the content of the second column
         - Followed  by <h6> ... ###end### ... </h6>.
 
-   * For opposite sides 2 columns:
+   <u>* For opposite sides 2 columns:</u>
         - <h6> ... ###start_inv### ... </h6>
         - Followed by the content of the second columns.
         - Followed by <h6> ... ###next### ... </h6>.
@@ -28,7 +30,7 @@ Following these steps will get the desired results:
 
 3. Copy the source HTML code and paste it in the application Original HTML text entry.
 
-4. Click on PROCESS button.
+4. Click on <b>PROCESS</b> button.
 
 5. Copy the result HTML code and replace the original one on the website
 """
@@ -76,7 +78,7 @@ def get_default_settings():
             "pre_proc_unwrap_without_class": False,
             "pre_proc_unwrap_without_class_affected": ["div", "span"],
             "pre_proc_remove_attributes": False,
-            "pre_proc_remove_attributes_affected": ["p", "span", "strong", "b", "div", "u", "em", "h1", "h2"],
+            "pre_proc_remove_attributes_affected": ["p", "span", "strong", "b", "div", "u", "em", "h1", "h2", "br"],
             "pre_proc_unwrap_no_content": False,
             "pre_proc_unwrap_no_content_affected": ["strong", "em", "u", "i", "span", "div"],
             "pre_proc_group_consecutive": False,

@@ -26,6 +26,13 @@ class TestStringMethods(unittest.TestCase):
         html_res = str(doc)
         self.assertEqual('<span><b>an other</b><b class="d">introduction</b></span>', html_res)
 
+    def test_group_consecutive_tags4(self):
+        html_text = '<span><b>good <br/> in</b><b>troduction</b></span>'
+        doc = bs4.BeautifulSoup(html_text, "html.parser")
+        doc = tree_processing.group_consecutive_tags(doc, ["strong", "em", "u", "i", "span", "b"])
+        html_res = str(doc)
+        self.assertEqual('<span><b>good <br/> introduction</b></span>', html_res)
+
 
 if __name__ == '__main__':
     unittest.main()

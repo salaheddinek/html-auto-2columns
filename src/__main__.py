@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-__version__ = '3.0.2'
+__version__ = '3.1.4'
 __author__ = 'Salah Eddine Kabbour'
-__package__ = " html-auto-2columns"
+__package__ = "html-auto-2columns"
 
 import tree_processing
 from ui_mainwindow import Ui_MainWindow
@@ -31,7 +31,6 @@ class MainWindow(Qw.QMainWindow):
         self.ui.setupUi(self)
         self.ui_settings = Ui_stg_form()
         self.ui_settings.setupUi(self.ui.wid_settings)
-        self.help_msg = Qw.QMessageBox(self)
         self.setWindowTitle(__package__)
         self.thread = None
         self.downloader = None
@@ -54,6 +53,7 @@ class MainWindow(Qw.QMainWindow):
     def process_html(self):
         html_processor = formatter.HtmlFormatter(self)
         html_processor.log.connect(self.log)
+        html_processor.w_msg.connect(self.window_message)
         out = html_processor.process(self.ui.plain_text_html.toPlainText(), self.saved_settings)
         self.ui.plain_text_processed.setPlainText(out)
 
@@ -229,7 +229,7 @@ class MainWindow(Qw.QMainWindow):
         self.ui.btn_settings.clicked.connect(self.show_hide_settings)
         self.ui.btn_quit.clicked.connect(self.close_app)
         self.ui.btn_logs.clicked.connect(self.show_hide_logs)
-        self.ui.btn_help.clicked.connect(self.help_msg.exec)
+        self.ui.btn_help.clicked.connect(self.display_about_page)
         self.ui.btn_copy.clicked.connect(self.copy_to_clipboard)
 
         self.ui.btn_compact.clicked.connect(self.compact_html_text)
@@ -272,13 +272,13 @@ class MainWindow(Qw.QMainWindow):
             btn_color = button.palette().color(Qg.QPalette.Button).name()
             button.setStyleSheet(styling.generate_tool_button_stylesheet(btn_color))
 
-        frames = [self.ui.plain_text_logs, self.ui.plain_text_html,  self.ui.plain_text_processed]
+        frames = [self.ui.plain_text_logs, self.ui.plain_text_html, self.ui.plain_text_processed]
         for frame in frames:
             frame.setStyleSheet(styling.generate_frame_stylesheet(styling.COLORS["entry_bg"]))
 
         line_edits = [self.ui_settings.ledit_save_path, self.ui_settings.ledit_r_class_tags,
                       self.ui_settings.ledit_r_attributes_tags, self.ui_settings.ledit_no_content_tags,
-                      self.ui_settings.ledit_group_consecutive,]
+                      self.ui_settings.ledit_group_consecutive, ]
         for line_edit in line_edits:
             line_edit.setStyleSheet(styling.generate_line_edit_stylesheet(styling.COLORS["entry_bg"]))
 
@@ -324,17 +324,35 @@ class MainWindow(Qw.QMainWindow):
 
         self.i_wn = qt_icons.qt_icon_from_text_image(qt_icons.LINE_WRAP_OFF_ICON)
 
-        # message box
-        # self.help_msg.setStyleSheet("color: red; background-color: green;")
-        self.help_msg.setWindowTitle("About page")
-        self.help_msg.setText(config.HELP_TEXT)
+    def display_about_page(self):
+        text = f'<div style="text-align:center"><h1>{__package__}</h1><small>v{__version__}</small></div>'
+        text += config.HELP_TEXT
+        self.window_message(text, "About page")
+
+    @Qc.Slot()
+    def window_message(self, msg, title="Info", w=1000, h=800):
+        txt = msg.replace("<h6>", "&lt;h6&gt;")
+        txt = txt.replace("</h6>", "&lt;/h6&gt;")
+        txt = txt.replace("\n", "<br/>")
+
+        msg_box = Qw.QMessageBox(self)
+        msg_box.setPalette(self.palette())
+        msg_box.setFont(self.font())
+        msg_box.setWindowTitle(title)
+        msg_box.setText(txt)
+        msg_box.show()
+        btn = msg_box.findChild(Qw.QPushButton)
+        btn.setFont(self.font())
+        btn_color = btn.palette().color(Qg.QPalette.Button).name()
+        btn.setStyleSheet(styling.generate_button_stylesheet(btn_color))
+        msg_box.setStyleSheet(f"QLabel {{min-width: {w}px; min-height: {h}px;}}")
+        msg_box.exec()
 
     @Qc.Slot()
     def log(self, msg, log_lvl=logging.INFO, time=5000):
         logger = logging.getLogger(__package__)
         logger.log(log_lvl, msg)
         if log_lvl == logging.INFO or log_lvl == logging.WARNING or log_lvl == logging.ERROR:
-
             bar_msg = " " + msg.capitalize()
             now = datetime.now()
             ui_log = "<span>[<span style='color: {};'>{}</span>] [{}] - {}</span>"
