@@ -24,7 +24,7 @@ class Ui_stg_form(object):
     def setupUi(self, stg_form):
         if not stg_form.objectName():
             stg_form.setObjectName(u"stg_form")
-        stg_form.resize(721, 466)
+        stg_form.resize(721, 505)
         self.verticalLayout_2 = QVBoxLayout(stg_form)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.widget_2 = QWidget(stg_form)
@@ -205,10 +205,6 @@ class Ui_stg_form(object):
 
 
         self.verticalLayout_2.addWidget(self.widget_4)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_2.addItem(self.verticalSpacer)
 
         self.widget = QWidget(stg_form)
         self.widget.setObjectName(u"widget")
