@@ -53,7 +53,7 @@ class Header6:
 
 class HtmlFormatter(Qc.QObject):
     log = Qc.Signal(str, int, int)
-    w_msg = Qc.Signal(str, str, int)
+    w_msg = Qc.Signal(str, str, int, int)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -135,7 +135,7 @@ class HtmlFormatter(Qc.QObject):
         if not is_ok:
             self.log.emit(error_msg, logging.ERROR, 5000)
             if window_msg != "":
-                self.w_msg.emit(window_msg, "Error message", 700)
+                self.w_msg.emit(window_msg, "Error message", 800, 500)
             return ""
 
         self.log.emit("Successfully inserted '{}' two-columns sections (cleared '{}' previously generated HTML and '{}'"

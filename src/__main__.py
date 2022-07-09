@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-__version__ = '3.2.0'
+__version__ = '3.2.1'
 __author__ = 'Salah Eddine Kabbour'
 __package__ = "html-auto-2columns"
 
@@ -330,7 +330,7 @@ class MainWindow(Qw.QMainWindow):
         self.window_message(text, "About page")
 
     @Qc.Slot()
-    def window_message(self, msg, title="Info", minimum_width=800):
+    def window_message(self, msg, title="Info", minimum_width=800, minimum_height=900):
         txt = msg.replace("<h6>", "&lt;h6&gt;")
         txt = txt.replace("</h6>", "&lt;/h6&gt;")
         txt = txt.replace("\n", "<br/>")
@@ -345,13 +345,19 @@ class MainWindow(Qw.QMainWindow):
         qd.setPalette(self.palette())
         qd.setWindowTitle(title)
 
+        scroll = Qw.QScrollArea()
         layout = Qw.QVBoxLayout()
-        label = Qw.QLabel(txt, qd)
+        label = Qw.QLabel(txt, scroll)
         label.setTextFormat(Qc.Qt.RichText)
         label.setWordWrap(True)
         label.setPalette(self.palette())
         label.setFont(used_font)
-        layout.addWidget(label)
+        scroll.setWidget(label)
+        scroll.setFrameShape(Qw.QFrame.StyledPanel);
+        scroll.setStyleSheet(styling.generate_scrollable_area_stylesheet())
+        scroll.setWidgetResizable(True)
+        layout.addWidget(scroll)
+        # scroll.setFixedHeight(200)
         mini_layout = Qw.QHBoxLayout()
         h_spacer = Qw.QSpacerItem(40, 20, Qw.QSizePolicy.Policy.Expanding, Qw.QSizePolicy.Policy.Minimum)
         mini_layout.addSpacerItem(h_spacer)
@@ -366,6 +372,7 @@ class MainWindow(Qw.QMainWindow):
         mini_layout.addSpacerItem(h_spacer)
         layout.addLayout(mini_layout)
         qd.setMinimumWidth(minimum_width)
+        qd.setMinimumHeight(minimum_height)
 
         qd.setLayout(layout)
         qd.show()

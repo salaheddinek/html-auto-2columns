@@ -30,8 +30,10 @@ def deploy_command(i_deploy_path, i_app_path, additional_params=""):
     # print("Build command:\n\n{}\n\n".format(cmd))
     # os.system(cmd)
     name = get_app_full_name(i_app_path)
-    cmd = [i_app_path, "--onefile", "-n", name, "--clean", "--distpath", path.join(i_deploy_path, "dist"),
+    cmd = [i_app_path, "-n", name, "--clean", "--distpath", path.join(i_deploy_path, "dist"),
            "--workpath", path.join(i_deploy_path, "build"), "--specpath", i_deploy_path]
+    cmd += ["--onefile"]
+    #cmd += ["--noconsole"]
     for param in additional_params:
         cmd += [param]
     PyInstaller.__main__.run(cmd)

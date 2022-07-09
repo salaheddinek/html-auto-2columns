@@ -79,3 +79,9 @@ def generate_line_edit_stylesheet(bg_color=""):
     frame_ss = frame_ss.replace("QFrame", "QLineEdit")
     frame_ss += "QLineEdit{padding: 7px;}"
     return frame_ss
+
+
+def generate_scrollable_area_stylesheet():
+
+    scroll_ss = "QScrollArea  {border: 0px solid transparent;}"
+    return scroll_ss
